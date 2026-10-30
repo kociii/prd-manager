@@ -128,6 +128,16 @@ docs/prd/
 - 生成文档的 front matter 带 `skill_version`；遇到旧格式文档，先列出与现行模板的差异，征得同意再增量补字段，见 `references/migration.md`。
 - 未运行、失败、环境阻塞、待用户验收分别记录；不能把线框图完成写成产品实现或视觉验收通过。
 
+### 版本文档同步纪律（2026-10-30 起，项目约定优先于本节其他默认值）
+
+任何仓库 push 含实质代码提交（feat/fix/perf/refactor）后，**必须回主仓库同步对应版本 PRD**（LongSky 已装 pre-push hook 强提醒，仅提醒不阻断）：
+
+1. **一版一条记录**：一个版本在 README 只有一条记录。未完成先记过程态，后续完成**更新同一条**（状态列原地改 + 版本目录 `CHANGELOG.md` 原条目追加小节并带 commit 号）——**禁止一版多行/多条记录，禁止新建重复条目**。
+2. **README 长表只留当前态摘要**：立项依据、拍板过程、勘误经过等过程叙事写入版本目录 `CHANGELOG.md`，状态列不堆过程文本。
+3. **完成度总览一眼表**：README 顶部维护紧凑总览表（版本降序、一行一版本、图例统一），**随状态更新同步维护**，与长表一一对应。
+4. **状态发布基准**：以使用人提供的线上版本号（前后端 commit）做 ancestry 验证为准，验证通过才标「已发布/已上线」。
+5. **涉 DDL 版本放 `checklist.md`**：表名/列清单/执行顺序/回滚，部署前逐项勾选；表名/列名必须对照 DO `@TableName`/`@TableField` 核实，不得从旧文档抄。
+
 ## 模板与校验
 
 模板均在 assets/，按产物选取：`prd_template.md`、`design_template.md`、`dev_template.md`、`database_template.md`、`plan_template.md`、`task_template.md`、`test_template.md`、`review_template.md`、`ops_template.md`、`changelog_template.md`、`incident_template.md`、`claude_template.md`、`readme_template.md`。
