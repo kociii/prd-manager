@@ -58,7 +58,7 @@ git clone https://github.com/kociii/prd-manager ~/.claude/skills/prd-manager
 
 - **前端项目**：`design.md` 为必含文档，重点描述页面结构、交互和组件设计
 - **后端项目**：`dev.md` 为核心文档，需包含接口影响清单
-- **涉及数据库变更**：应额外输出独立 SQL 文件，如 `sql/DDL.sql` 与 `sql/DML_init.sql`
+- **涉及数据库变更**：优先使用项目已有迁移机制；无迁移机制且确需独立 SQL 时才放版本目录 `sql/`
 
 ## 输入示例
 
@@ -72,18 +72,23 @@ git clone https://github.com/kociii/prd-manager ~/.claude/skills/prd-manager
 - `/prd-manager 帮我把所有版本里跟认证相关的内容都找出来。我不仅要文件列表，还想让你顺手整理一下：哪些版本已经覆盖登录、注册、找回密码、权限控制，哪些版本只做了一部分，哪些地方还缺。`
 - `我准备把 v0.1.0 收起来，用 prd-manager 先帮我检查这个版本的文档是不是整理完整了。比如 prd、plan、design、dev 有没有缺，README 索引有没有同步，确认没问题以后再帮我归档。`
 
+## 版本与状态管理
+
+- 统一状态机：草案 → 待评审 → 已确认（基线）→ 开发中 → 已验收 → 已发布（冻结）；旁支为已取代/已取消/已归档
+- 需求 ID 只增不复用，移除的 ID 保留并标「已移除」；新版本写增量并带 `based_on`
+- 单文件 `docs/prd/CHANGELOG.md`，Unreleased 置顶，支持 `[YANKED]`
+- `scripts/check_docs.py` 校验索引一致性、状态枚举、ID、链接、引用与冻结清单
+- 旧格式文档迁移见 `references/migration.md`；skill 自身版本见 `VERSION` 与 `CHANGELOG.md`
+
 ## 目录
 
 ```text
 .
 ├── SKILL.md
-├── assets/
-│   ├── prd_template.md
-│   ├── design_template.md
-│   ├── plan_template.md
-│   ├── dev_template.md
-│   └── readme_template.md
-├── references/
+├── VERSION / CHANGELOG.md
+├── assets/            # 各类文档模板
+├── references/        # 场景指南（含 lifecycle.md、migration.md）
+├── scripts/           # validate_ascii.py、check_docs.py
 ├── agents/
 └── evals/
 ```
@@ -101,7 +106,10 @@ git clone https://github.com/kociii/prd-manager ~/.claude/skills/prd-manager
 - 对比版本差异
 - 搜索需求
 - 归档版本
+- 已发布后勘误、基线后改需求、ID 拆分/移除、旧格式迁移、一致性检查
 
 ## 许可证
 
 MIT，详见 `LICENSE`。
+
+`evals/files/` 是评测夹具，复制到临时项目根目录后再运行对应 prompt；夹具内容为示例，不代表真实项目。
