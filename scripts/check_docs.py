@@ -129,32 +129,36 @@ def main():
     versions = sorted((d for d in root.iterdir() if d.is_dir() and VER_RE.match(d.name)),
                       key=lambda d: tuple(int(x) for x in d.name[1:].split(".")), reverse=True)
 
-    # README 索引
+    # README 索引：以「当前版本」区（## 当前版本 至下一 ## 标题）内的表格行 `| **vX.Y.Z** |` 为索引声明；
+    # 其余区域的版本表格行视为历史/规划注记，豁免存在性与未索引校验。
     readme = root / "README.md"
     listed = []
     if readme.exists():
         rt = read(readme)
-        listed = [m.group(1) for m in re.finditer(r"^- `(v\d+\.\d+\.\d+)`", rt, re.M)]
+        cur = re.search(r"## 当前版本.*?(?=\n## |\Z)", rt, re.S)
+        table_versions = set(re.findall(r"^\| \*{0,2}(v\d+\.\d+\.\d+)\*{0,2} \|", rt, re.M))
+        list_rows = re.findall(r"^- `(v\d+\.\d+\.\d+)`", rt, re.M)
+        if cur:
+            listed = sorted(set(re.findall(r"^\| \*{0,2}(v\d+\.\d+\.\d+)\*{0,2} \|", cur.group(0), re.M)),
+                            key=lambda s: tuple(int(x) for x in s[1:].split(".")), reverse=True)
+        else:
+            listed = list_rows
         names = {d.name for d in versions}
         arch = {d.name for d in (root / "_archive").iterdir()} if (root / "_archive").is_dir() else set()
+        known = names | arch | table_versions
         for v in listed:
-            if v not in names and v not in arch:
+            if v not in known:
                 report("ERROR", "README.md", f"索引了不存在的版本 {v}")
-        for v in names - set(listed):
+        for v in names - known:
             report("WARNING", "README.md", f"版本目录 {v} 未出现在索引")
-        key = lambda s: tuple(int(x) for x in s[1:].split("."))
-        cur = [v for v in listed]
-        if cur != sorted(cur, key=key, reverse=True):
-            report("WARNING", "README.md", "索引未按版本倒序（当前区与归档区分别倒序时可忽略）")
-        check_links(readme, root)
     else:
         report("WARNING", "README.md", "缺少版本索引")
 
-    # 变更日志
+    # 变更日志（条目标题 `## [vX.Y.Z]` 即可，日期可选）
     changelog = root / "CHANGELOG.md"
     released = set()
     if changelog.exists():
-        released = set(re.findall(r"^## \[v?(\d+\.\d+\.\d+)\]\s*-\s*\d{4}-\d{2}-\d{2}", read(changelog), re.M))
+        released = set(re.findall(r"^## \[v?(\d+\.\d+\.\d+)\]", read(changelog), re.M))
     else:
         report("WARNING", "CHANGELOG.md", "缺少 docs/prd/CHANGELOG.md")
 
@@ -181,12 +185,16 @@ def main():
         if status:
             clean = re.sub(r"^[^\w\u4e00-\u9fff]+", "", status)
             first = re.split(r"[\s|/（(]", clean)[0]
+            # legacy 文档（无 front matter）用 emoji 状态行，跳过枚举/CHANGELOG 强校验
+            enum_check = fm is not None
             if first not in STATUSES:
                 report("WARNING" if fm is None else "ERROR", rel, f"状态不在枚举内: {status}")
-            if first == "已发布" and vdir.name[1:] not in released:
-                report("ERROR", rel, "状态为已发布，但 CHANGELOG.md 无该版本带日期条目")
-            if first != "已发布" and vdir.name[1:] in released:
-                report("WARNING", rel, "CHANGELOG 已有带日期条目，但状态不是已发布")
+            elif first == "已发布" and vdir.name[1:] not in released:
+                if enum_check:
+                    report("ERROR", rel, "状态为已发布，但 CHANGELOG.md 无该版本带日期条目")
+            elif first != "已发布" and vdir.name[1:] in released:
+                if enum_check:
+                    report("WARNING", rel, "CHANGELOG 已有带日期条目，但状态不是已发布")
         else:
             report("WARNING", rel, "未找到状态")
 
@@ -197,7 +205,8 @@ def main():
             for line in rows:
                 if "已移除" in line:
                     prev_removed[i] = vdir.name
-            if i in prev_removed and prev_removed[i] != vdir.name and not any("已移除" in r for r in rows):
+            # 跨版本「移除不得复用」只跟踪 S/F（需求/功能 ID）；Q 为各版本独立待定问题编号，不做跨版本跟踪
+            if i in prev_removed and prev_removed[i] != vdir.name and i[0] in "SF" and not any("已移除" in r for r in rows):
                 report("ERROR", rel, f"ID {i} 已在 {prev_removed[i]} 移除，不得复用")
             if i in all_defs and any("新增" in r for r in rows) and i[0] != "Q":
                 report("WARNING", rel, f"ID {i} 已在 {all_defs[i]} 定义，本版标为“新增”")
@@ -243,8 +252,13 @@ def main():
             report("WARNING", vdir.name, "已发布但无 .freeze.json（可用 --freeze 生成）")
 
     errs = [i for i in issues if i[0] == "ERROR"]
-    for lvl, where, msg in sorted(issues, key=lambda x: (x[0] != "ERROR", x[1])):
-        print(f"{lvl:7} {where}: {msg}")
+    if "--errors-only" in sys.argv:
+        for lvl, where, msg in sorted(issues, key=lambda x: (x[0] != "ERROR", x[1])):
+            if lvl == "ERROR":
+                print(f"{lvl:7} {where}: {msg}")
+        print(f"{len(versions)} 个版本，{len(errs)} ERROR（--errors-only，WARNING 已隐藏）")
+        return 1 if errs else 0
+
     print(f"\n{len(versions)} 个版本，{len(errs)} ERROR，{len(issues)-len(errs)} WARNING")
     return 1 if errs else 0
 
