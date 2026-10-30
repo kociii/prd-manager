@@ -18,7 +18,7 @@
 | 数据模型变化 | database.md、实际迁移、兼容与回滚验证 |
 | 部署/配置变化 | ops.md |
 | 依赖、负责人或进度变化 | plan/tasks、README 状态 |
-| 版本交付记录 | CHANGELOG.md，链接需求和真实证据 |
+| 版本交付记录 | 版本目录 CHANGELOG.md 记过程细账（追加）；`docs/prd/CHANGELOG.md` 按版本号降序插入里程碑条目 |
 | 代码 push（实质提交） | **README 该版本状态列原地更新 + 完成度总览表同步**；过程变更入版本目录 CHANGELOG.md——一个版本一条记录，禁止多行 |
 
 纯文案/低影响变更只做针对性检查，不自动生成 review.md。设计增量遵循 `references/design-guidance.md`，保留页面/组件 ID，联动更新 ASCII、层级树与交互表。
@@ -30,4 +30,4 @@
 - 对比：报告需求/规则、页面/状态/流转、契约、测试及发布影响的差异；页面沿稳定 ID 对比，分别说明布局、组件层级、职责和行为的变化，不只输出字符 diff。
 - 归档：在用户明确请求范围内移动到 _archive 并更新索引/链接；不删除历史，不改归档需求以掩盖当前偏差。
 
-CHANGELOG 只记录实际变化及验证，不虚构发布日期、关联 PR 或已通过测试。示例模板见 `assets/changelog_template.md`。
+CHANGELOG 两套并行：**项目级** `docs/prd/CHANGELOG.md` 只记版本里程碑（立项/发布上线/验收完成/勘误/并入删除），**条目按版本号降序插入对应位置**（不按时间追加）；**版本级** `<version>/CHANGELOG.md` 记该版本过程细账（追加不新增）。两者只记录实际变化及验证，不虚构发布日期、关联 PR 或已通过测试。示例模板见 `assets/changelog_template.md`。
