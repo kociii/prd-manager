@@ -4,61 +4,315 @@
     {
       "id": 1,
       "prompt": "创建一个 v0.3.0 版本的 PRD，实现用户认证功能，包含登录页面、注册页面的界面设计",
-      "expected_output": "创建 docs/prd/v0.3.0/ 目录，使用 assets/ 模板生成 prd.md（含用户故事格式）、plan.md、design.md（含 ASCII 界面图）、dev.md（含通用架构图，无硬编码技术栈）",
+      "expected_output": "按请求创建版本需求及设计规格；design.md 同时包含登录/注册的 ASCII 线框、页面/区域/组件层级、职责/状态归属、交互状态及设计理由；后续技术方案基于真实代码，关联设计节点。",
       "files": []
     },
     {
       "id": 2,
       "prompt": "查看当前项目的所有 PRD 版本",
-      "expected_output": "列出 docs/prd/ 下的所有版本目录，展示状态总览格式（版本号、状态、需求数量、优先级分布）",
-      "files": ["docs/prd/v0.2.0/prd.md", "docs/prd/v0.2.1/prd.md", "docs/prd/v0.3.0/prd.md"]
+      "expected_output": "列出 docs/prd/ 下所有版本目录，展示版本号、统一枚举内的真实状态与产物入口，按语义化版本倒序；不虚构需求数量",
+      "files": [
+        "docs/prd/v0.2.0/prd.md",
+        "docs/prd/v0.2.1/prd.md",
+        "docs/prd/v0.3.0/prd.md"
+      ],
+      "expectations": [
+        "按版本倒序列出",
+        "状态取自统一枚举且与 prd.md 头部一致",
+        "不编造文档中不存在的数据"
+      ]
     },
     {
       "id": 3,
       "prompt": "在 v0.2.4 PRD 中添加一个新的需求：实现视频播放器的界面设计和技术实现",
-      "expected_output": "读取现有 v0.2.4/prd.md，追加新需求章节（含用户故事格式），更新 design.md 添加播放器界面 ASCII 图，更新 dev.md 添加播放器技术实现",
-      "files": ["docs/prd/v0.2.4/prd.md", "docs/prd/v0.2.4/design.md", "docs/prd/v0.2.4/dev.md"]
+      "expected_output": "读取现有版本需求与设计，追加播放器需求并仅更新相关 ASCII、组件层级、职责、播放/加载/错误状态及技术映射，保留无关页面与稳定 ID。",
+      "files": [
+        "docs/prd/v0.2.4/prd.md",
+        "docs/prd/v0.2.4/design.md",
+        "docs/prd/v0.2.4/dev.md"
+      ]
     },
     {
       "id": 4,
       "prompt": "对比 v0.2.0 和 v0.3.0 两个版本的 PRD",
       "expected_output": "读取两个版本的 prd.md，生成结构化对比（新增需求、删除需求、优先级变更、时间线变更），而非仅展示 git diff 原始输出",
-      "files": ["docs/prd/v0.2.0/prd.md", "docs/prd/v0.2.0/plan.md", "docs/prd/v0.3.0/prd.md", "docs/prd/v0.3.0/plan.md"]
+      "files": [
+        "docs/prd/v0.2.0/prd.md",
+        "docs/prd/v0.2.0/plan.md",
+        "docs/prd/v0.3.0/prd.md",
+        "docs/prd/v0.3.0/plan.md"
+      ]
     },
     {
       "id": 5,
       "prompt": "归档 v0.1.0 版本",
-      "expected_output": "确认归档操作，创建 docs/prd/_archive/ 目录（如不存在），将 docs/prd/v0.1.0/ 移动到 docs/prd/_archive/v0.1.0/，确认归档完成",
-      "files": ["docs/prd/v0.1.0/prd.md", "docs/prd/v0.1.0/plan.md"]
+      "expected_output": "按明确归档请求移动目标版本到 _archive，保留内容并同步索引/相对链接；已授权范围不重复询问。",
+      "files": [
+        "docs/prd/v0.1.0/prd.md",
+        "docs/prd/v0.1.0/plan.md"
+      ]
     },
     {
       "id": 6,
       "prompt": "搜索所有版本中与认证相关的需求",
-      "expected_output": "使用 grep 跨 docs/prd/ 搜索'认证'关键词，展示匹配的版本和文件列表",
-      "files": ["docs/prd/v0.2.0/prd.md", "docs/prd/v0.3.0/prd.md"]
+      "expected_output": "使用 rg 跨 docs/prd/ 搜索'认证'关键词，展示匹配的版本和文件列表",
+      "files": [
+        "docs/prd/v0.2.0/prd.md",
+        "docs/prd/v0.3.0/prd.md"
+      ]
     },
     {
       "id": 7,
       "prompt": "创建一个 v0.1.0 版本的 PRD，实现基础用户系统",
-      "expected_output": "检测到 docs/prd/ 目录不存在，提示用户初始化，创建 docs/prd/ 目录，然后创建 v0.1.0 版本并生成文档",
+      "expected_output": "用户请求创建且目录不存在时初始化 docs/prd，按指定版本生成所需需求文档，不强制全套产物或重复索取初始化确认。",
       "files": []
     },
     {
       "id": 8,
       "prompt": "创建一个 v0.2.0 版本的 PRD",
-      "expected_output": "检测到 docs/prd/v0.2.0/ 已存在，提示冲突并让用户选择：覆盖、换版本号或取消",
-      "files": ["docs/prd/v0.2.0/prd.md"]
+      "expected_output": "检测到 docs/prd/v0.2.0/ 已存在，先读取并增量合并，不覆盖用户修改；如需新范围且该版本已发布，则建议新版本号",
+      "files": [
+        "docs/prd/v0.2.0/prd.md"
+      ],
+      "expectations": [
+        "先读取已有 v0.2.0 文件",
+        "不整份覆盖",
+        "按状态判断：未发布则原版本合并，已发布则建议新版本"
+      ]
     },
     {
       "id": 9,
       "prompt": "查看 v9.9.9 版本的 PRD 结构",
       "expected_output": "提示 docs/prd/v9.9.9/ 不存在，列出可用版本供用户选择",
-      "files": ["docs/prd/v0.2.0/prd.md"]
+      "files": [
+        "docs/prd/v0.2.0/prd.md"
+      ]
     },
     {
       "id": 10,
       "prompt": "创建一个 v0.4.0 版本，只需要 prd.md 就行",
-      "expected_output": "仅生成 docs/prd/v0.4.0/prd.md（使用 assets/prd_template.md 模板），不生成 plan.md、design.md、dev.md",
+      "expected_output": "仅生成 docs/prd/v0.4.0/prd.md（使用 assets/prd_template.md 模板，含原始需求/需求分析/功能清单/使用链路/业务语言验收标准），不生成 plan.md、design.md、dev.md",
+      "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "在 v1.7.7 基础上修复支付回调验签失败导致订单状态不更新的 bug，影响 3 个用户，根因是回调接口没有验证时间戳防重放",
+      "expected_output": "识别为 bug 修复 → 建议 patch 版本（v1.7.8）→ 生成 CHANGELOG.md（记录 bug 修复详情、影响文件、修复方式）→ 更新 dev.md（文件变更清单）→ 更新 test.md（新增回归测试：验签时间戳防重放场景）→ 不更新 prd.md（需求未变）→ 建议记录 incidents/",
+      "files": [
+        "docs/prd/v1.7.7/prd.md",
+        "docs/prd/v1.7.7/dev.md"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "为 v1.8.0 版本生成测试文档和运维文档，这个版本新增了会员订阅功能，涉及支付和数据库新建 subscriptions 表",
+      "expected_output": "基于真实需求、代码和配置生成测试与运维文档；覆盖订阅、支付、数据迁移风险和业务验收；不擅自执行发布或生成与项目重复的迁移。",
+      "files": [
+        "docs/prd/v1.8.0/prd.md",
+        "docs/prd/v1.8.0/dev.md"
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "帮我记录一个生产事故：2026-05-15 凌晨 2 点 Redis 连接池耗尽导致所有 API 返回 500，持续了 15 分钟，影响约 200 个用户。原因是新上的批量查询没有设置连接超时",
+      "expected_output": "生成 incidents/2026-05-15-redis-pool-exhaustion.md（含问题描述、根因分析、修复方案增加连接超时配置、影响范围、教训：批量操作必须设超时）→ 更新 CHANGELOG.md → 更新 test.md（新增连接池压力测试）→ 更新 CLAUDE.md（补充已知问题：批量查询必须设置 Redis 连接超时）→ 更新 ops.md（监控告警：Redis 连接数 > 80% 时告警）",
+      "files": []
+    },
+    {
+      "id": 14,
+      "prompt": "检查一下 v1.7.8 的 PRD 需求是不是都实现了，有没有遗漏的功能或者没有 PRD 依据偷偷上线的接口",
+      "expected_output": "执行双向验证：1. 正向验证 PRD→代码（读取 prd.md 提取需求列表 → 对比 dev.md 文件变更清单 → 对比 test.md 测试覆盖）2. 反向验证 代码→PRD（扫描新增 API/Controller → 检查是否在 dev.md 接口影响清单中 → 检查是否在 prd.md 有对应需求）→ 生成审计报告（标注哪些需求未实现、哪些代码无 PRD 依据）",
+      "files": [
+        "docs/prd/v1.7.8/prd.md",
+        "docs/prd/v1.7.8/dev.md",
+        "docs/prd/v1.7.8/test.md"
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "更新项目的 CLAUDE.md，我最近做了一个重要决策：把消息队列从 BullMQ 迁移到 Kafka，因为业务量增长 10 倍后 BullMQ 的 Redis 内存占用太高了",
+      "expected_output": "读取现有 CLAUDE.md → 追加 ADR（背景：BullMQ Redis 内存占用过高、决策：迁移到 Kafka、理由：支持 10 倍吞吐量且内存可控、影响：需新增 Kafka 集群运维、消费者逻辑需重写）→ 更新技术栈章节 → 不重复 dev.md 中的具体实现细节",
+      "files": [
+        "CLAUDE.md",
+        "docs/prd/v1.8.0/dev.md"
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "为 v1.8.0 新加的会员订阅功能生成完整的开发计划，有 3 个人参与：张三负责后端支付对接，李四负责前端订阅页面，王五负责测试",
+      "expected_output": "生成 plan.md（含任务拆解：后端支付/前端页面/测试各 3-5 个任务、里程碑时间线、每个任务标注负责人张三/李四/王五、风险：支付对接依赖第三方排期）→ 使用状态标记 ⏳ → 不包含技术架构和数据模型（应在 dev.md 中）→ 同步更新 README.md",
+      "files": [
+        "docs/prd/v1.8.0/prd.md",
+        "docs/prd/v1.8.0/dev.md"
+      ]
+    },
+    {
+      "id": 17,
+      "prompt": "我赶时间，帮我直接在代码里把用户余额扣减逻辑改一下，加个手续费 1% 的功能，不用写测试和文档了",
+      "expected_output": "读取已有规则，仅对手续费精度、舍入、最低手续费等无法推断的业务缺口澄清；尊重用户明确排除测试和文档的范围，说明未验证项，不机械以文档门禁拒绝。遵守项目已有强制检查，不声称无证据的通过。",
+      "files": []
+    },
+    {
+      "id": 18,
+      "prompt": "在 v1.8.0 基础上新增一个数据导出 CSV 的功能，用户可以在后台选择时间范围导出订单数据",
+      "expected_output": "识别为 Minor 版本迭代（新增功能、向后兼容）→ 建议 v1.9.0 → 询问：导出字段有哪些？权限控制（谁能导出）？数据量大时是否需要异步导出？→ 生成 prd.md 增量更新（新需求含原始需求/需求分析/使用链路）→ 生成 design.md（如有 UI） → 生成 dev.md（含接口影响清单：新增 GET /api/orders/export） → 生成 CHANGELOG.md → 生成 test.md（含大数据量导出测试、权限测试、验收用例）",
+      "files": [
+        "docs/prd/v1.8.0/prd.md",
+        "docs/prd/v1.8.0/dev.md"
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "后端项目 v2.1.0 要新增优惠券功能，需要新建 coupons 和 user_coupons 两张表，帮我准备文档",
+      "expected_output": "读取实际数据库和迁移机制，生成表用途、字段、枚举、关系和变更说明，链接实际 schema/迁移；不强制 MySQL/InnoDB 或创建重复 SQL。",
+      "files": []
+    },
+    {
+      "id": 20,
+      "prompt": "这是我们的原始需求：'客户说现在下单后要手动填快递单号太麻烦了，能不能付款后自动把单号回传到他们的淘宝店'。帮我创建 v1.6.0 的 PRD",
+      "expected_output": "prd.md 中原始需求章节原样保留客户原话（不改写）→ 需求分析给出是什么/边界/关键假设（如：假设只支持淘宝店、假设已对接淘宝开放平台）→ 使用链路配流程图（下单→付款→发货→单号回传，含失败分支）→ 验收标准全部业务语言（如'付款后在淘宝后台能看到快递单号'，不出现'接口''字段''回调返回200'等术语）→ 版本级功能清单含验收结果列",
+      "files": []
+    },
+    {
+      "id": 21,
+      "prompt": "v1.5.0 开发完了，客户验收时说'导出功能在大数据量下超时'不通过，帮我记录一下",
+      "expected_output": "记录实际验收的现象、期望、严重度和不通过状态；先判断版本是否已发布。未发布版本默认原版本修复并复测，已发布/归档或新增范围再建议新版本；不伪造验收人或通过记录。",
+      "files": [
+        "docs/prd/v1.5.0/prd.md",
+        "docs/prd/v1.5.0/test.md"
+      ]
+    },
+    {
+      "id": 22,
+      "prompt": "v1.8.0 是 AI 刚写完的版本，先帮我审查，不要修改代码。我不想逐行读实现，重点看有没有偏离需求、低效算法和漏测边界。",
+      "expected_output": "从实际代码解释模块/算法/契约/数据流；需求到代码到验证证据映射；分轮审查并报告触发条件、位置、影响及置信状态；只交付报告，不修复，不把有文件等同于功能完成。",
+      "files": []
+    },
+    {
+      "id": 23,
+      "prompt": "按已确认 PRD 修复订单重复回调导致重复扣款，继续做到可以验收；不要再问相同方案。",
+      "expected_output": "沿用授权和需求基线，验证幂等/并发/精度等适用不变量；先保存失败证据，最小修复后原场景复测与相关回归。报告真实检查结果和待用户验收状态，不重复确认、不自动发布。",
+      "files": []
+    },
+    {
+      "id": 24,
+      "prompt": "只把导出按钮的文字从下载改成导出，做一下对应检查。",
+      "expected_output": "局部文案与显示验证；不生成三轮完整审查报告，不强制新建单测或覆盖率80%，不启动无关性能重构。",
+      "files": []
+    },
+    {
+      "id": 25,
+      "prompt": "我们的项目现在无法连接测试数据库，帮我评估这次批量查询优化能否交付。",
+      "expected_output": "完成可做的代码/复杂度/调用次数检查，区分静态推导与实测；记录环境阻塞及未验证的集成/性能项，不声称实测提速或全部通过。",
+      "files": []
+    },
+    {
+      "id": 26,
+      "prompt": "这个版本只做PRD，把会员续费需求说明白，不要开始开发。",
+      "expected_output": "保留原始需求、业务语言验收和流程；只交付需求文档，不运行实现审查或生成虚构代码证据，不扩展成开发任务执行。",
+      "files": []
+    },
+    {
+      "id": 27,
+      "prompt": "代码自测全绿，你帮我把客户验收也标成通过吧，客户还没看。",
+      "expected_output": "保留AI自测通过，客户验收记为待验收；提供可照做的业务验收步骤，不虚构客户操作或验收人。",
+      "files": []
+    },
+    {
+      "id": 28,
+      "prompt": "为 v2.0.0 做订单列表和详情页设计。保持 ASCII，但还要有能指导开发拆组件的层级关系。",
+      "expected_output": "design.md 包含两个稳定页面ID、ASCII、页面/区域/组件树；关键节点职责、输入、状态归属、重复/条件分支与事件处理清楚；图/树/表 ID 对齐，不输出HTML，不以导航/文件目录树替代组件树。",
+      "files": []
+    },
+    {
+      "id": 29,
+      "prompt": "已有产品是高密度客服后台，只改订单筛选区，继续用旧品牌色。",
+      "expected_output": "读取现有UI与设计；仅更新筛选区ASCII、对应层级与状态/事件规格及关联验收，保留其他页面；设计理由适合高密度任务，不套用营销风格。",
+      "files": []
+    },
+    {
+      "id": 30,
+      "prompt": "给中文订单表单画 ASCII，含手机号校验失败、提交中、手机端布局。",
+      "expected_output": "使用等宽ascii围栏和统一基础边框，中文按显示宽度对齐，无Emoji/Tab；表单语义标签、状态恢复、主行动、移动端重排及组件状态归属明确；字符对齐检查不冒充产品验收。",
+      "files": []
+    },
+    {
+      "id": 31,
+      "prompt": "只给纯后端API做技术方案，项目用PostgreSQL和现有迁移目录。",
+      "expected_output": "不生成空design.md，不硬编码MySQL或复制迁移；方案以实际代码/配置为依据。",
+      "files": []
+    },
+    {
+      "id": 32,
+      "prompt": "我想让开发知道页面里的筛选、表格、行操作、分页分别由谁管理状态。",
+      "expected_output": "输出组件包含树及状态/事件表；区分草稿筛选与生效筛选、共享结果状态、分页事件、重复行实例键，不只输出页面跳转图。框架和文件路径映射在dev.md。",
+      "files": []
+    },
+    {
+      "id": 33,
+      "prompt": "只做页面设计，不写应用代码，也不用HTML。",
+      "expected_output": "按ASCII+层级+设计指导生成design.md，解释视觉/交互/适配；不创建HTML或实施产品代码，不伪造运行证据。",
+      "files": []
+    },
+    {
+      "id": 34,
+      "prompt": "把已有 design.md 的组件层级落实成开发任务和技术方案。",
+      "expected_output": "读取实际代码和设计节点，在dev.md映射组件/文件/输入事件/状态归属；按职责子树拆tasks，复用既有组件，解释合并拆分，不强制一个视觉节点一个文件。",
+      "files": []
+    },
+    {
+      "id": 35,
+      "prompt": "v0.1.0 已发布，现在发现 S2 的验收标准写错了一个文案，请修正",
+      "expected_output": "已发布版本只允许勘误：仅改文案并在 CHANGELOG 记勘误；范围或行为变化则开新版本",
+      "expectations": [
+        "确认版本状态为已发布",
+        "只做勘误，不改需求范围",
+        "在 docs/prd/CHANGELOG.md 记录勘误"
+      ],
+      "files": []
+    },
+    {
+      "id": 36,
+      "prompt": "v0.2.0 已确认，使用人要追加一个导出功能",
+      "expected_output": "基线之后改需求：分配新 ID，不重编号，prd.md 追加修订记录并同步受影响文档",
+      "expectations": [
+        "新需求使用新 ID，不复用",
+        "在修订记录表追加一行",
+        "同步 design/dev/plan 的受影响部分"
+      ],
+      "files": []
+    },
+    {
+      "id": 37,
+      "prompt": "把 S3 拆成两个需求，并移除 S4",
+      "expected_output": "拆分写明去向，移除的 ID 保留并标已移除，不复用、不重编号",
+      "expectations": [
+        "原 ID 标已拆分并指向新 ID",
+        "S4 保留并标已移除",
+        "后续新增不复用 S3/S4"
+      ],
+      "files": []
+    },
+    {
+      "id": 38,
+      "prompt": "这个项目的 docs/prd 是旧格式，帮我升级到新版规范",
+      "expected_output": "按 references/migration.md：先只读盘点差异并征得同意，再增量补字段，不重写正文",
+      "expectations": [
+        "先列差异清单",
+        "征得同意后才修改",
+        "不覆盖用户内容、不重编号",
+        "完成后运行 scripts/check_docs.py"
+      ],
+      "files": []
+    },
+    {
+      "id": 39,
+      "prompt": "检查 docs/prd 文档是否一致",
+      "expected_output": "运行 scripts/check_docs.py 并按 ERROR/WARNING 汇报，不编造结果",
+      "expectations": [
+        "运行了 check_docs.py",
+        "如实转述 ERROR/WARNING"
+      ],
       "files": []
     }
   ]
