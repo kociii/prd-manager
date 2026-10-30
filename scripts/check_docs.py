@@ -159,6 +159,7 @@ def main():
         report("WARNING", "CHANGELOG.md", "缺少 docs/prd/CHANGELOG.md")
 
     prev_removed = {}
+    prev_defs = {}
     all_defs = {}
     for vdir in reversed(versions):  # 从旧到新
         prd = vdir / "prd.md"
@@ -201,6 +202,14 @@ def main():
             if i in all_defs and any("新增" in r for r in rows) and i[0] != "Q":
                 report("WARNING", rel, f"ID {i} 已在 {all_defs[i]} 定义，本版标为“新增”")
             all_defs.setdefault(i, vdir.name)
+
+        # ID 不得无故消失：非增量版本（无 based_on）应保留上一版全部 S/F ID
+        incremental = bool(fm and fm.get("based_on"))
+        if prev_defs and not incremental:
+            for i in sorted(set(prev_defs) - set(defs)):
+                if i[0] in "SF":
+                    report("WARNING", rel, f"ID {i} 在上一版存在，本版消失；应保留并标“已移除”（增量版本请在 front matter 填 based_on）")
+        prev_defs = defs
 
         # 下游引用
         others = [p for p in vdir.rglob("*.md") if p != prd]

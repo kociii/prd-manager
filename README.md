@@ -111,3 +111,5 @@ git clone https://github.com/kociii/prd-manager ~/.claude/skills/prd-manager
 ## 许可证
 
 MIT，详见 `LICENSE`。
+
+`evals/files/` 是评测夹具，复制到临时项目根目录后再运行对应 prompt；夹具内容为示例，不代表真实项目。

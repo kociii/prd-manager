@@ -11,9 +11,13 @@
 - `VERSION` 与本 CHANGELOG；生成文档 front matter 带 `skill_version`。
 - `prd_template`：front matter、变更类型列、待决问题表（状态/决定/日期）、修订记录表。
 
+- `evals/files/`：20 个评测夹具；eval 2、8 修正，新增 5 条带 expectations 的生命周期评测。
+- `check_docs.py`：跨版本 ID 消失检测。
+
 ### Changed
 - CHANGELOG 模板改为单文件 `docs/prd/CHANGELOG.md`，Unreleased 置顶，支持 `[YANKED]`，去除项目专属示例。
 - 页面 ID 前缀 `P01` 改为 `D01`，避免与优先级 P0/P1 冲突。
+- `priority_definitions.md` 由 `lifecycle.md` 引用。
 - `plan_template`/`readme_template` 状态改用统一枚举。
 - `SKILL.md`「版本与状态」改为以状态判定“原版本修/开新版本”。
 
